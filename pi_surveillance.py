@@ -101,13 +101,13 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 
 	# draw the text and timestamp on the frame
 	ts = timestamp.strftime("%A %d %B %Y %I:%M:%S%p")
-	cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
-		cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 	cv2.putText(frame, ts, (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
 		0.35, (0, 0, 255), 1)
 
 	# check to see if the room is occupied
-	if text == "Occupied":
+	if text == "Occupied" and conf["use_dropbox"]:
+		cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
+					cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 		# check to see if enough time has passed between uploads
 		if (timestamp - lastUploaded).seconds >= conf["min_upload_seconds"]:
 			# increment the motion counter
@@ -136,6 +136,8 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 
 	# otherwise, the room is not occupied
 	else:
+		cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
+					cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 		motionCounter = 0
 
 	# check to see if the frames should be displayed to screen
