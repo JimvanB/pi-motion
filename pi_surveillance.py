@@ -105,11 +105,11 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 		0.35, (0, 0, 255), 1)
 
 	# check to see if the room is occupied
-	if text == "Occupied" and conf["use_dropbox"]:
+	if text == "Occupied":
 		cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 		# check to see if enough time has passed between uploads
-		if (timestamp - lastUploaded).seconds >= conf["min_upload_seconds"]:
+		if (conf["use_dropbox"] and timestamp - lastUploaded).seconds >= conf["min_upload_seconds"]:
 			# increment the motion counter
 			motionCounter += 1
 
