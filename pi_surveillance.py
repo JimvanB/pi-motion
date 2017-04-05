@@ -3,6 +3,7 @@
 
 # import the necessary packages
 from pyimagesearch.tempimage import TempImage
+from pymusic import mixer
 from dropbox.client import DropboxOAuth2FlowNoRedirect
 from dropbox.client import DropboxClient
 from picamera.array import PiRGBArray
@@ -14,6 +15,10 @@ import imutils
 import json
 import time
 import cv2
+
+#initliaze the music
+mixer.init()
+mixer.music.load('fan.wav')
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -52,6 +57,7 @@ time.sleep(conf["camera_warmup_time"])
 avg = None
 lastUploaded = datetime.datetime.now()
 motionCounter = 0
+mixer.music.play()
 
 # capture frames from the camera
 for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
