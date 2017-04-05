@@ -3,7 +3,7 @@
 
 # import the necessary packages
 from pyimagesearch.tempimage import TempImage
-from pymusic import mixer
+from pygame import mixer
 from dropbox.client import DropboxOAuth2FlowNoRedirect
 from dropbox.client import DropboxClient
 from picamera.array import PiRGBArray
@@ -19,7 +19,6 @@ import cv2
 #initliaze the music
 mixer.init()
 mixer.music.load('fan.wav')
-
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-c", "--conf", required=True,
@@ -57,7 +56,6 @@ time.sleep(conf["camera_warmup_time"])
 avg = None
 lastUploaded = datetime.datetime.now()
 motionCounter = 0
-mixer.music.play()
 
 # capture frames from the camera
 for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -115,7 +113,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 		cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 		# check to see if enough time has passed between uploads
-		if (conf["use_dropbox"]) and ((timestamp - lastUploaded.seconds) >= conf["min_upload_seconds"]):
+		if (timestamp - lastUploaded).seconds >= conf["min_upload_seconds"]:
 			# increment the motion counter
 			motionCounter += 1
 
@@ -123,6 +121,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 			# high enough
 			if motionCounter >= conf["min_motion_frames"]:
 				# check to see if dropbox sohuld be used
+				mixer.music.play()
 				if conf["use_dropbox"]:
 					# write the image to temporary file
 					t = TempImage()
@@ -139,6 +138,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 				# counter
 				lastUploaded = timestamp
 				motionCounter = 0
+				
 
 	# otherwise, the room is not occupied
 	else:
